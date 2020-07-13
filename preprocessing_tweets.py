@@ -18,8 +18,6 @@ for file in os.listdir(directory):
     f = open(directory_in_str+"/"+filename, "r")
     for line in f:
         p = re.compile(r'(\w+,\w+,\d+-\d+-\d+ \d+:\d+:\d+,)')
-        string=''' "b""Superstar commentators @beemerpga and @Luke_Elvy are coming to #PGATOUR2K21... and they're gonna have a LOT to say\xe2\x80\xa6 https://t.co/KMvQwcyZQP""" '''
-        cond = p.finditer(string)
         newA = p.sub("",line)
         #print(newA)
         q = re.compile(r'(^ |((.)+RT (@\w+: ))|(\\x\w+)|(\\\w)|(@\w+)|(#\w+)|(https:\/\/(www.)?\w+.\w+(\/\w+)?))')
@@ -28,8 +26,11 @@ for file in os.listdir(directory):
         r = re.compile(r'(^b|([^A-Z|a-z| |,|.|;|:|\d]))')
         newC = r.sub("",newB)
         newC = r.sub("",newC)
-        #print(newC)
-        ff.write(newC+"\n")
+        s = re.compile(r'( )')
+        check = s.sub("",newC)
+        if (check != ""):
+            #print(newC)
+            ff.write(newC+"\n")
         #for match in cond:
         #    m = match.span()
         #    print(m)
