@@ -1,8 +1,8 @@
-make = testing
 
-run: testing
-	./testing
+all: generator
 
+generator: generator.c
+	gcc generator.c -o generator -lm
 
-testing: testingDataType.c
-	gcc testingDataType.c -o testing -lm
+clean:
+	rm generator
