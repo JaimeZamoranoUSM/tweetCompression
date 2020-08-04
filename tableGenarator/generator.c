@@ -6,6 +6,46 @@
 #include <errno.h>
 #include <limits.h>
 
+double uniform(double min,double max,int roundInt){
+  double number;
+  double randomize = ((double)rand()/(double)RAND_MAX);
+  number = min + randomize * (max - min) + 0.5*roundInt;
+  return number;
+}
+
+double gaussian(double mean, double s){
+  double u = ((double)rand()/(double)RAND_MAX);
+  double v = ((double)rand()/(double)RAND_MAX);
+  if (u==0.0) return mean;
+  double x = ( sqrt(-2*log(u)) * cos(2*M_PI*v) );
+  double number = s*x + (double)mean;
+  return number;
+}
+
+double exponential(double min,double max,double lambda){
+  double dl = (1.0/(max-min));
+  dl = (-log(dl))/lambda;
+  double candidate = uniform(0,1,0);
+  double number;
+  if(candidate==0.0){
+    number = min + candidate * (max - min) + 0.5;
+    return number;
+  }
+  double a = -log(candidate)/lambda;
+  double v = uniform(0,dl,0);
+  while(v>a){
+    candidate = uniform(0,1,0);
+    if(candidate==0.0){
+      number = min + candidate * (max - min) + 0.5;
+      return number;
+    }
+    a = -log(candidate)/lambda;
+    v = uniform(0,dl,0);
+  }
+  number = min + candidate * (max - min) + 0.5;
+  return number;
+}
+
 int compare_function(const void *a,const void *b) {
 int *x = (int *) a;
 int *y = (int *) b;
@@ -39,10 +79,31 @@ int main(int argc, char **argv){
   srand(getNumber(argv[3]));
   int selection[nTables];
   int i = 0;
+  int tipoRand = getNumber(argv[4]);
   //seleccion de tablas
-  for(i=0;i<nTables;i++){
-    selection[i] = (rand()%total);
+  switch (tipoRand) {
+    case 1:
+    for(i=0;i<nTables;i++){
+      selection[i] = uniform(0,total,1);
+    }
+    break;
+    case 2:
+    for(i=0;i<nTables;i++){
+      selection[i] = gaussian(500000,100000);
+    }
+    break;
+    case 3:
+    for(i=0;i<nTables;i++){
+      selection[i] = exponential(0,total,1);
+    }
+    break;
+    default:
+    for(i=0;i<nTables;i++){
+      selection[i] = (rand()%total);
+    }
+    break;
   }
+
   qsort (selection, sizeof(selection)/sizeof(*selection), sizeof(*selection), compare_function);
   int repeats=0;
   int currentNumber=-1;
@@ -66,6 +127,7 @@ int main(int argc, char **argv){
     for(k=0;k<finalTally;k++){
       if(i==selection[k]){
         if(!(selection[k]==currentNumber)){
+          printf("%d\n",selection[k]);
           currentNumber=selection[k];
           tag=1;
           break;
