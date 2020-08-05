@@ -6,10 +6,10 @@
 #include <errno.h>
 #include <limits.h>
 
-double uniform(double min,double max,int roundInt){
+double uniform(double min,double max){
   double number;
   double randomize = ((double)rand()/(double)RAND_MAX);
-  number = min + randomize * (max - min) + 0.5*roundInt;
+  number = min + randomize * (max - min);
   return number;
 }
 
@@ -24,25 +24,25 @@ double gaussian(double mean, double s){
 
 double exponential(double min,double max,double lambda){
   double dl = (1.0/(max-min));
-  dl = (-log(dl))/lambda;
-  double candidate = uniform(0,1,0);
+  dl = ( (-log(dl)));
+  double candidate = uniform(0,1);
   double number;
   if(candidate==0.0){
-    number = min + candidate * (max - min) + 0.5;
+    number = min + candidate * (max - min);
     return number;
   }
-  double a = -log(candidate)/lambda;
-  double v = uniform(0,dl,0);
+  double a = (-log(candidate)/lambda);
+  double v = uniform(0,dl);
   while(v>a){
-    candidate = uniform(0,1,0);
+    candidate = uniform(0,1);
     if(candidate==0.0){
-      number = min + candidate * (max - min) + 0.5;
+      number = min + candidate * (max - min);
       return number;
     }
-    a = -log(candidate)/lambda;
-    v = uniform(0,dl,0);
+    a = (-log(candidate)/lambda);
+    v = uniform(0,dl);
   }
-  number = min + candidate * (max - min) + 0.5;
+  number = min + candidate * (max - min);
   return number;
 }
 
@@ -80,21 +80,24 @@ int main(int argc, char **argv){
   int selection[nTables];
   int i = 0;
   int tipoRand = getNumber(argv[4]);
+  double pl;
+  if (argc>5){ pl = atof(argv[5]); }
+  else{ pl=1; }
   //seleccion de tablas
   switch (tipoRand) {
     case 1:
     for(i=0;i<nTables;i++){
-      selection[i] = uniform(0,total,1);
+      selection[i] = (int)(uniform(0,total) + 0.5);
     }
     break;
     case 2:
     for(i=0;i<nTables;i++){
-      selection[i] = gaussian(500000,100000);
+      selection[i] = (int)gaussian(500000,100000);
     }
     break;
     case 3:
     for(i=0;i<nTables;i++){
-      selection[i] = exponential(0,total,1);
+      selection[i] = (int)(exponential(0,total,pl)+0.5);
     }
     break;
     default:
@@ -118,16 +121,22 @@ int main(int argc, char **argv){
   int tag=0;
   float value;
   char temp[100];
+  char temp2[100];
   FILE *data = fopen("finalTables.txt", "w");
   sprintf(temp,"%d",finalTally);
   fputs(temp,data); fputs("\n",data);
   int k;
+  //opcional, para graficar data en excel
+  FILE *graf;
+  graf = fopen("points.txt","w");
 
   for(i=0;i<total;i++){
     for(k=0;k<finalTally;k++){
       if(i==selection[k]){
         if(!(selection[k]==currentNumber)){
-          printf("%d\n",selection[k]);
+          sprintf(temp2,"%d",selection[k]);
+          fputs(temp2,graf);
+          fputs("\n",graf);
           currentNumber=selection[k];
           tag=1;
           break;
@@ -154,5 +163,6 @@ int main(int argc, char **argv){
 
   fclose(file);
   fclose(data);
+  fclose(graf);
   return 0;
 }
