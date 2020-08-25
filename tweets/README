@@ -1,0 +1,19 @@
+The makefile present in this folder is for converting a file full of short texts
+(tweets) into a 2 files of frequency tables (that can be used by the Metric Spaces
+Library). Just use make to create an exe call converter.
+After This, you can use ./converter "parameters" in order to use it.
+This parameters are:
+- ./converter tweetFile nTweets seed trainingFile testingFile
+Legend:
+*tweetFile: name of the file that has the tweets.
+*nTweets: the number of tweets that you want to use for training the index
+         (if it's 0, it converts all the tweets to tables in the testingFile).
+*seed: the random seed that will be used to generate the samples
+       (uniformly disribuited)
+*trainingFile: name of the file that will contain the training sample of frequency
+               tables
+*testingFile: name of the file that will contain the testing sample of frequency
+              tables
+Example: ./converter finalTweets.txt 10000 30 train.txt test.txt
+The example will take 10k tweets for the training sample and leave the rest to
+the testing sample.
