@@ -1,20 +1,21 @@
-f = open("out.txt","r")
+f = open("out5.txt","r")
 pos=0
-cant=2035
-centroides=set()
+cant=7894
+centroides=[]
 for line in f:
+    if pos>cant:
+        break
     if pos>0:
-        if pos<cant+1:
-            centroides.add(int(line))
+        centroides.append(int(line))
     pos+=1
-centroides=list(centroides)
 centroides.sort()
 for centroide in centroides:
+    centroide-=1
     print(centroide)
 
 
-og = open("trainee.txt","r")
-nuevo = open("centroids.txt","w")
+og = open("train.txt","r")
+nuevo = open("centroidsP5R.txt","w")
 pos=0
 used=0
 nuevo.write(str(len(centroides))+"\n")
